@@ -1,0 +1,76 @@
+name: "Create or Update Unique Comment"
+description: "Create or update a comment on an issue or pull request. Composite of find-comment and create-or-update-comment actions."
+
+inputs:
+  token:
+    description: "GITHUB_TOKEN or a repo scoped PAT."
+    default: ${{ github.token }}
+  repository:
+    description: "The full name of the repository in which to create or update a comment."
+    default: ${{ github.repository }}
+  issue-number:
+    description: "The number of the issue or pull request in which to create a comment."
+  body:
+    description: "The comment body. Cannot be used in conjunction with `body-path`."
+  body-path:
+    description: "The path to a file containing the comment body. Cannot be used in conjunction with `body`."
+  edit-mode:
+    description: 'The mode when updating a comment, "replace" or "append".'
+    default: "replace"
+  append-separator:
+    description: "The separator to use when appending to an existing comment. (`newline`, `space`, `none`)"
+    default: "newline"
+  reactions:
+    description: "A comma or newline separated list of reactions to add to the comment."
+  reactions-edit-mode:
+    description: 'The mode when updating comment reactions, "replace" or "append".'
+    default: "replace"
+  comment-author:
+    description: "The author of the comment to search for."
+    default: "github-actions[bot]"
+  unique-body-includes:
+    description: "A string to search for in the body of comments to determine uniqueness."
+  unique-body-regex:
+    description: "A regular expression to search for in the body of comments to determine uniqueness."
+  find-direction:
+    description: "Search direction, specified as `first` or `last`"
+    default: first
+  find-nth:
+    description: "0-indexed number, specifying which comment to return if multiple are found"
+    default: 0
+
+outputs:
+  comment-id:
+    description: "The id of the created comment"
+    value: ${{ steps.update-comment.outputs.comment-id }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Find Comment
+      id: find-comment
+      uses: peter-evans/find-comment@v3
+      with:
+        token: ${{ inputs.token }}
+        repository: ${{ inputs.repository }}
+        issue-number: ${{ inputs.issue-number }}
+        comment-author: ${{ inputs.comment-author }}
+        body-includes: ${{ inputs.unique-body-includes }}
+        body-regex: ${{ inputs.unique-body-regex }}
+        direction: ${{ inputs.find-direction }}
+        nth: ${{ inputs.find-nth }}
+
+    - name: Create or Update Comment
+      id: create-or-update-comment
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        token: ${{ inputs.token }}
+        repository: ${{ inputs.repository }}
+        issue-number: ${{ inputs.issue-number }}
+        comment-id: ${{ steps.find-comment.outputs.comment-id }}
+        body: ${{ inputs.body }}
+        body-path: ${{ inputs.body-path }}
+        edit-mode: ${{ inputs.edit-mode }}
+        append-separator: ${{ inputs.append-separator }}
+        reactions: ${{ inputs.reactions }}
+        reactions-edit-mode: ${{ inputs.reactions-edit-mode }}
