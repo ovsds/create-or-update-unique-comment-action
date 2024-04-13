@@ -1,5 +1,8 @@
 # Create or Update Unique Comment
 
+[![CI](https://github.com/ovsds/create-or-update-unique-comment-action/workflows/Check%20PR/badge.svg)](https://github.com/ovsds/create-or-update-unique-comment-action/actions?query=workflow%3A%22%22Check+PR%22%22)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Create%20or%20Update%20Unique%20Comment-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAM6wAADOsB5dZE0gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAERSURBVCiRhZG/SsMxFEZPfsVJ61jbxaF0cRQRcRJ9hlYn30IHN/+9iquDCOIsblIrOjqKgy5aKoJQj4O3EEtbPwhJbr6Te28CmdSKeqzeqr0YbfVIrTBKakvtOl5dtTkK+v4HfA9PEyBFCY9AGVgCBLaBp1jPAyfAJ/AAdIEG0dNAiyP7+K1qIfMdonZic6+WJoBJvQlvuwDqcXadUuqPA1NKAlexbRTAIMvMOCjTbMwl1LtI/6KWJ5Q6rT6Ht1MA58AX8Apcqqt5r2qhrgAXQC3CZ6i1+KMd9TRu3MvA3aH/fFPnBodb6oe6HM8+lYHrGdRXW8M9bMZtPXUji69lmf5Cmamq7quNLFZXD9Rq7v0Bpc1o/tp0fisAAAAASUVORK5CYII=)](https://github.com/marketplace/actions/create-or-update-unique-comment)
+
 A GitHub action to create or update a unique comment on a PR or Issue.
 If the comment already exists, it will update the comment.
 
@@ -13,7 +16,7 @@ This action is a composite of
 
 ```yml
 - name: Create comment
-  uses: ovsds/create-or-update-unique-comment@v1
+  uses: ovsds/create-or-update-unique-comment-action@v1
   with:
     issue-number: 1
     body: |
