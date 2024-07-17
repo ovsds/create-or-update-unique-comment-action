@@ -50,9 +50,9 @@ Action inputs are mostly the same as in
 
 ### Action Outputs
 
-| Name         | Description            | Default |
-| ------------ | ---------------------- | ------- |
-| `comment-id` | The ID of the comment. |         |
+| Name         | Description            |
+| ------------ | ---------------------- |
+| `comment-id` | The ID of the comment. |
 
 ## Development
 
