@@ -1,0 +1,101 @@
+name: E2E
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  e2e-default:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find comment
+        id: find-comment-before
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.number }}
+          body-includes: |
+            This is a test comment.
+
+      - name: Assert no comment
+        uses: nick-fields/assert-action@v2
+        with:
+          actual: ${{ steps.find-comment-before.outputs.comment-id }}
+          expected: ""
+
+      - name: Test Run
+        id: test-run
+        uses: ./
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            Default unique-body-includes part.
+            TEST
+          unique-body-includes: |
+            Default unique-body-includes part.
+
+      - name: Find comment
+        id: find-comment-after
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.number }}
+          body-includes: |
+            Default unique-body-includes part.
+
+      - name: Assert comment
+        uses: nick-fields/assert-action@v2
+        with:
+          actual: ${{ steps.find-comment-after.outputs.comment-body }}
+          expected: |
+            Default unique-body-includes part.
+            TEST
+
+      - name: Test Run update
+        id: test-run-update
+        uses: ./
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            Default unique-body-includes part.
+            TEST2
+          unique-body-includes: |
+            Default unique-body-includes part.
+
+      - name: Find comment
+        id: find-comment-after-update
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.number }}
+          body-includes: |
+            Default unique-body-includes part.
+
+      - name: Assert comment
+        uses: nick-fields/assert-action@v2
+        with:
+          actual: ${{ steps.find-comment-after-update.outputs.comment-body }}
+          expected: |
+            Default unique-body-includes part.
+            TEST2
+  e2e:
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
+
+    needs:
+      - e2e-default
+
+    steps:
+      - name: Collect Results
+        uses: ovsds/collect-needs-result-action@v1
+        with:
+          needs_json: ${{ toJson(needs) }}
+          skip_allowed: false

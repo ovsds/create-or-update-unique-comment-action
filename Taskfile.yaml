@@ -14,36 +14,30 @@ tasks:
   _with_nvm:
     internal: true
     cmds:
-      - "source ${HOME}/.nvm/nvm.sh && nvm use && {{.COMMAND}}"
+      - "source ${HOME}/.nvm/nvm.sh && nvm install && {{.COMMAND}}"
 
   init:
     desc: Initialize project environment
     cmds:
-      - echo 'Installing node version...'
-      - task: _with_nvm
-        vars: { COMMAND: "nvm install" }
-
       - echo 'Installing node dependencies...'
       - task: _with_nvm
-        vars: { COMMAND: "npm clean-install" }
+        vars: { COMMAND: "npm install" }
 
       - echo 'Installing husky pre-commit...'
       - task: _with_nvm
-        vars: { COMMAND: "npm run prepare-husky" }
+        vars: { COMMAND: "npm run prepare" }
 
   lint:
     desc: Lint project
     cmds:
-      - echo 'Running prettier checks...'
-      - task: _prettier
-        vars: { COMMAND: "--check ." }
+      - task: _with_nvm
+        vars: { COMMAND: "npm run lint:check" }
 
   lint-fix:
     desc: Lint fix project
     cmds:
-      - echo 'Running prettier fixes...'
-      - task: _prettier
-        vars: { COMMAND: "--write ." }
+      - task: _with_nvm
+        vars: { COMMAND: "npm run lint:fix" }
 
   clean:
     desc: Clean project environment
@@ -59,6 +53,11 @@ tasks:
         vars: { COMMAND: "npm update" }
       - task: _with_nvm
         vars: { COMMAND: "npm outdated" }
+
+  dependencies-check:
+    desc: Check dependencies
+    cmds:
+      - echo 'Checking node dependencies...'
       - task: _with_nvm
         vars: { COMMAND: "npm audit" }
 
@@ -71,15 +70,12 @@ tasks:
         --overwrite-if-exists
         --output-dir ../
         {{.TEMPLATE_PATH}}
-        project_name="Create or Update Unique Comment Action"
-        marketplace_name="Create or Update Unique Comment"
+        project_name='Create or Update Unique Comment Action'
+        project_slug='create-or-update-unique-comment-action'
+        marketplace_name='Create or Update Unique Comment'
+        action_type='composite'
+        node_version='v21.5.0'
+        owner_name='Dmitry Ovsiannikov'
+        owner_github_login='ovsds'
     vars:
       TEMPLATE_PATH: '{{.TEMPLATE_PATH | default "https://github.com/ovsds/template-repository-github-action"}}'
-
-  # CI-specific
-
-  ci-init:
-    desc: Initialize project environment in CI
-    cmds:
-      - echo 'Installing node dependencies...'
-      - npm clean-install
