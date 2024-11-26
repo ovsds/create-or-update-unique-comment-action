@@ -18,7 +18,7 @@ This action is a composite of
 jobs:
   create-or-update-unique-comment:
     permissions:
-      contents: read
+      pull-requests: write
 
     steps:
       - name: Create comment
