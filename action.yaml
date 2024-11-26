@@ -38,6 +38,9 @@ inputs:
   find-nth:
     description: "0-indexed number, specifying which comment to return if multiple are found"
     default: "0"
+  delete:
+    description: "Delete the comment instead of updating if it is found or skip creation."
+    default: "false"
 
 outputs:
   comment-id:
@@ -61,6 +64,7 @@ runs:
         nth: ${{ inputs.find-nth }}
 
     - name: Create or Update Comment
+      if: ${{ inputs.delete == 'false' }}
       id: create-or-update-comment
       uses: peter-evans/create-or-update-comment@v4
       with:
@@ -74,6 +78,15 @@ runs:
         append-separator: ${{ inputs.append-separator }}
         reactions: ${{ inputs.reactions }}
         reactions-edit-mode: ${{ inputs.reactions-edit-mode }}
+
+    - name: Delete Comment
+      if: ${{ inputs.delete == 'true' && steps.find-comment.outputs.comment-id != '' }}
+      shell: bash
+      run: |
+        echo "Deleting comment with id: ${{ steps.find-comment.outputs.comment-id }}"
+        gh api -X DELETE /repos/${{ inputs.repository }}/issues/comments/${{ steps.find-comment.outputs.comment-id }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
 
 branding:
   icon: "message-square"
