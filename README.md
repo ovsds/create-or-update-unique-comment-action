@@ -12,18 +12,24 @@ This action is a composite of
 
 ## Usage
 
-### Add a comment to an issue or pull request
+### Example
 
 ```yaml
-- name: Create comment
-  uses: ovsds/create-or-update-unique-comment-action@v1
-  with:
-    issue-number: 1
-    body: |
-      Example comment body that contains unique part to identify the comment.
-      And some more text that is dynamic.
-    unique-body-includes: |
-      Example comment body that contains unique part to identify the comment.
+jobs:
+  create-or-update-unique-comment:
+    permissions:
+      contents: read
+
+    steps:
+      - name: Create comment
+        uses: ovsds/create-or-update-unique-comment-action@v1
+        with:
+          issue-number: 1
+          body: |
+            Example comment body that contains unique part to identify the comment.
+            And some more text that is dynamic.
+          unique-body-includes: |
+            Example comment body that contains unique part to identify the comment.
 ```
 
 ### Action Inputs
@@ -58,8 +64,8 @@ Action inputs are mostly the same as in
 
 ### Global dependencies
 
-- nvm
-- node
+- [Taskfile](https://taskfile.dev/installation/)
+- [nvm](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script)
 
 ### Taskfile commands
 
