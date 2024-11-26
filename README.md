@@ -53,6 +53,7 @@ Action inputs are mostly the same as in
 | `unique-body-regex`    | A regular expression to search for in the body of comments, originally `body-regex`.                                                                                                                |                    |
 | `find-direction`       | Search direction, specified as `first` or `last`, originally `direction`.                                                                                                                           | `first`            |
 | `find-nth`             | 0-indexed number, specifying which comment to return if multiple are found, originally `nth`                                                                                                        | 0                  |
+| `delete`               | Delete the comment instead of updating if it is found or skip creation.                                                                                                                             | false              |
 
 ### Action Outputs
 
