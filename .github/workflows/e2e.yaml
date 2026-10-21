@@ -31,7 +31,7 @@ jobs:
         with:
           issue-number: ${{ github.event.number }}
           body-includes: |
-            This is a test comment.
+            Default unique-body-includes part.
 
       - name: Assert no comment
         uses: nick-fields/assert-action@0efd6166067d9c59d89c710fab4f79fb066f8985 # v4.0.1
@@ -144,6 +144,15 @@ jobs:
         with:
           actual: ${{ steps.find-comment-after-delete-skip.outputs.comment-id }}
           expected: ""
+
+      - name: Delete test comment
+        if: always()
+        uses: $/
+        with:
+          issue-number: ${{ github.event.number }}
+          unique-body-includes: |
+            Default unique-body-includes part.
+          delete: true
   e2e:
     runs-on: ubuntu-latest
     if: always() && !cancelled()
