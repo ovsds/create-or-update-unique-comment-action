@@ -86,7 +86,7 @@ runs:
         echo "Deleting comment with id: ${COMMENT_ID}"
         gh api -X DELETE "/repos/${REPOSITORY}/issues/comments/${COMMENT_ID}"
       env:
-        GITHUB_TOKEN: ${{ inputs.token }}
+        GH_TOKEN: ${{ inputs.token }}
         REPOSITORY: ${{ inputs.repository }}
         COMMENT_ID: ${{ steps.find-comment.outputs.comment-id }}
 
