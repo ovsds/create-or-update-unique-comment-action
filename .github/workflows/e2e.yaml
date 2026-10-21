@@ -7,6 +7,10 @@ on:
       - reopened
       - synchronize
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
 jobs:
   e2e-default:
     runs-on: ubuntu-latest
@@ -17,25 +21,27 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Find comment
         id: find-comment-before
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         with:
           issue-number: ${{ github.event.number }}
           body-includes: |
             This is a test comment.
 
       - name: Assert no comment
-        uses: nick-fields/assert-action@v2
+        uses: nick-fields/assert-action@0efd6166067d9c59d89c710fab4f79fb066f8985 # v4.0.1
         with:
           actual: ${{ steps.find-comment-before.outputs.comment-id }}
           expected: ""
 
       - name: Test Run
         id: test-run
-        uses: ./
+        uses: $/
         with:
           issue-number: ${{ github.event.number }}
           body: |
@@ -46,14 +52,14 @@ jobs:
 
       - name: Find comment
         id: find-comment-after
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         with:
           issue-number: ${{ github.event.number }}
           body-includes: |
             Default unique-body-includes part.
 
       - name: Assert comment
-        uses: nick-fields/assert-action@v2
+        uses: nick-fields/assert-action@0efd6166067d9c59d89c710fab4f79fb066f8985 # v4.0.1
         with:
           actual: ${{ steps.find-comment-after.outputs.comment-body }}
           expected: |
@@ -62,7 +68,7 @@ jobs:
 
       - name: Test Run update
         id: test-run-update
-        uses: ./
+        uses: $/
         with:
           issue-number: ${{ github.event.number }}
           body: |
@@ -73,14 +79,14 @@ jobs:
 
       - name: Find comment
         id: find-comment-after-update
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         with:
           issue-number: ${{ github.event.number }}
           body-includes: |
             Default unique-body-includes part.
 
       - name: Assert comment
-        uses: nick-fields/assert-action@v2
+        uses: nick-fields/assert-action@0efd6166067d9c59d89c710fab4f79fb066f8985 # v4.0.1
         with:
           actual: ${{ steps.find-comment-after-update.outputs.comment-body }}
           expected: |
@@ -89,7 +95,7 @@ jobs:
 
       - name: Test Run delete
         id: test-run-delete
-        uses: ./
+        uses: $/
         with:
           issue-number: ${{ github.event.number }}
           body: |
@@ -101,21 +107,21 @@ jobs:
 
       - name: Find comment
         id: find-comment-after-delete
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         with:
           issue-number: ${{ github.event.number }}
           body-includes: |
             Default unique-body-includes part.
 
       - name: Assert no comment
-        uses: nick-fields/assert-action@v2
+        uses: nick-fields/assert-action@0efd6166067d9c59d89c710fab4f79fb066f8985 # v4.0.1
         with:
           actual: ${{ steps.find-comment-after-delete.outputs.comment-id }}
           expected: ""
 
       - name: Test Run delete skip
         id: test-run-delete-skip
-        uses: ./
+        uses: $/
         with:
           issue-number: ${{ github.event.number }}
           body: |
@@ -127,14 +133,14 @@ jobs:
 
       - name: Find comment
         id: find-comment-after-delete-skip
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         with:
           issue-number: ${{ github.event.number }}
           body-includes: |
             Default unique-body-includes part.
 
       - name: Assert no comment
-        uses: nick-fields/assert-action@v2
+        uses: nick-fields/assert-action@0efd6166067d9c59d89c710fab4f79fb066f8985 # v4.0.1
         with:
           actual: ${{ steps.find-comment-after-delete-skip.outputs.comment-id }}
           expected: ""
@@ -142,12 +148,14 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled()
 
+    permissions: {}
+
     needs:
       - e2e-default
 
     steps:
       - name: Collect Results
-        uses: ovsds/collect-needs-result-action@v1
+        uses: ovsds/collect-needs-result-action@12190e2a1bfe85d9c024f190a3833973e97998f8 # v1.0.0
         with:
           needs_json: ${{ toJson(needs) }}
           skip_allowed: false
